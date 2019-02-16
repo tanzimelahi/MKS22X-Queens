@@ -2,11 +2,9 @@ import java.util.Arrays;
 import java.util.ArrayList;
 public class QueenBoard {
   private int[][] board;
-  private int c;
-  private int index;
+
   public QueenBoard (int size) {
-	  c=0;
-	  index=0;
+
 	  board= new int[size][size];
 	  for(int i=0; i<size;i++) {
 		  for(int c=0;c<size;c++) {
@@ -16,180 +14,112 @@ public class QueenBoard {
   }
 
 
-  private boolean addQueen(int c, int index) {  // index is the row where parsing starts
+public boolean addQueen(int r,int col){
+  if(board[r][col]==0){
+    board[r][col]=1;
+    for(int incre=1;col+incre<board.length && r+incre<board.length;incre++) {  // changes the avaibility of diagonals(rihgt and down)
+      board[r+incre][col+incre]--;
+    }
+    for(int incre=1;r-incre>=0 && col+incre<board.length;incre++) {// diagonals(right and up)
+    board[r-incre][col+incre]--;
+    }
+    for(int c=0;c<board.length;c++) { // changes the avaibility of the columns by parsing through rows
+      if(col==c) {
 
-      for(int i=this.index;i<board.length;i++) { // here i is parsing through rows
-    	  if(board[i][c]==0) {// if a position is found
-    		  board[i][c]=1;
-    		 int r=i;
-    		  for(int row=0;row<board.length;row++) { // changes the avaibility of the columns by parsing through rows
-    			  if(row==r) {
+      }
+      else {
+      board[r][c]--;
+      }
+    }
+  return true;
+  }return false;
+}
+public boolean removeQueen(int r,int col){
 
-    			  }
-    			  else {
-    			  board[row][c]--;
-    			  }
-    		  }
-    		  for(int col=0;col<board.length;col++) { // changes the avaibility of rows(y axis) by parsing through columns
-    			  if(col==c) {
-
-    			  }
-    			  else {
-    			  board[r][col]--;
-    			  }
-    			}
-    	 	  for(int incre=1;c+incre<board.length && r+incre<board.length;incre++) {  // changes the avaibility of diagonals(rihgt and down)
-    			  board[r+incre][c+incre]--;
-    		  }
-              for(int incre=1;c-incre>=0 && r-incre>=0;incre++) {// diagonals(left and up)
-    			  board[r-incre][c-incre]--;
-
-    		  }
-              for(int incre=1;r-incre>=0 && c+incre<board.length;incre++) {// diagonals(right and up)
-        		  board[r-incre][c+incre]--;
-        	  }
-              for(int incre=1;r+incre<board.length&& c-incre>=0;incre++) { // diagonals(left and down)
-        		  board[r+incre][c-incre]--;
-        	  }
-             this.index=0;// changes index to 0 so parsing can begin fromt the top row
-    		 return true;
-           }// the if statement ends here
-      }// the loop ends here
-
-      return false;
+  board[r][col]=0;
+  for(int incre=1;col+incre<board.length && r+incre<board.length;incre++) {  // changes the avaibility of diagonals(rihgt and down)
+    board[r+incre][col+incre]++;
   }
-  private  boolean removeQueen(int c,int index)  {// here remove sets the index(row) to the position of the previous queen+ 1
-  for(int i=0;i<board.length;i++) { // here i is parsing through rows
-	  if(board[i][c]==1) {// if a queen is found
-		  board[i][c]=0;
-		  this.index=i+1;
-		 int r=i;
-		  for(int row=0;row<board.length;row++) { // changes the avaibility of the columns by parsing through rows
-			  if(row==r) {
+  for(int incre=1;r-incre>=0 && col+incre<board.length;incre++) {// diagonals(right and up)
+  board[r-incre][col+incre]++;
+  }
+  for(int c=0;c<board.length;c++) { // changes the avaibility of the columns by parsing through rows
+    if(col==c) {
 
-			  }
-			  else {
-			  board[row][c]++;
-			  }
-		  }
-		  for(int col=0;col<board.length;col++) { // changes the avaibility of rows(y axis) by parsing through columns
-			  if(col==c) {
+    }
+    else {
+    board[r][c]++;
+    }
+  }
+  return true;
+}
+public boolean solveR(int col){
+  if(col==board.length){
+    return true;
+  }
+  for (int r=0;r<board.length;r++){
 
-			  }
-			  else {
-			  board[r][col]++;
-			  }
-			}
-	 	  for(int incre=1;c+incre<board.length && r+incre<board.length;incre++) {  // changes the avaibility of diagonals(rihgt and down)
-			  board[r+incre][c+incre]++;
-		  }
-          for(int incre=1;c-incre>=0 && r-incre>=0;incre++) {// diagonals(left and up)
-			  board[r-incre][c-incre]++;
+    if(addQueen(r,col)){
+        if(solveR(col+1)){
+          return true;
+        }
 
-		  }
-          for(int incre=1;r-incre>=0 && c+incre<board.length;incre++) {// diagonals(right and up)
-    		  board[r-incre][c+incre]++;
-    	  }
-          for(int incre=1;r+incre<board.length&& c-incre>=0;incre++) { // diagonals(left and down)
-    		  board[r+incre][c-incre]++;
-    	  }
-		 return true;
-       }   // the if statement ends here
-  }        // the loop ends here
+          removeQueen(r,col);
 
+      }
+  }
   return false;
 }
-
-
-	public boolean solveR() {
-		if(this.c<0) {
-			this.c=0;
-			this.index=0;
-			return false;
-		}
-		else if(solveR(this.c,this.index)) {
-			this.c=0;
-			this.index=0;
-			return true;
-		}
-		else {
-			return solveR();
-		}
-
-	}
-	public int countSolutions() {
-		this.c=0;
-		this.index=0;
-		return solveRCount(this.c,this.index,0);
-	}
-	   private int solveRCount(int c,int index,int count) {
-
-		   if(c==board.length) {
-			   count++;
-			   this.c--;
-			   removeQueen(c-1,this.index);
-			   return solveRCount(this.c,this.index,count);
-		   }
-		   else {
-			   if(addQueen(c,index)) {
-				   this.c++;
-
-				   return solveRCount(this.c,this.index,count);
-			   }
-			   else {
-				   this.c--;
-				   if(this.c<0) {  // stops indexout of range exception
-					   return count;
-				   }
-				   else {
-				   removeQueen(c-1,index);
-				   return solveRCount(this.c,this.index,count);
-
-				   }
-			   }
-		   }
-	   }
-
-   private boolean solveR(int c,int index) {
-
-	   if(c==board.length) {
-		   return true;
-	   }
-	   else {
-		   if(addQueen(c,index)) {
-			   this.c++;
-
-			   return solveR(c+1,index);
-		   }
-		   else {
-			   this.c--;
-			   if(this.c<0) {  // stops indexout of range exception
-				   return false;
-			   }
-			   else {
-			   removeQueen(c-1,index);
-
-			   return false;
-			   }
-		   }
-	   }
-   }
-  public String toString() {
-	String result="";
+public boolean solveR(){
 	for(int i=0;i<board.length;i++) {
-		for(int r=0;r<board.length;r++) {
-			if(board[i][r]==1) {
-				result+="Q ";
-			}
-			else {
-				result+="_ ";
+		for(int col=0;col<board.length;col++) {
+			if(board[i][col]!=0) {
+				throw new IllegalStateException("board has to be filled with 0 in the beginning");
 			}
 		}
-		result+="\n";
 	}
-	return result;
+  return solveR(0);
+ }
+public String toString() {
+String result="";
+for(int i=0;i<board.length;i++) {
+  for(int r=0;r<board.length;r++) {
+    if(board[i][r]==1) {
+      result+="Q ";
+    }
 
-   }
+    else {
+      result+="_ ";
+    }
+  }
+  result+="\n";
+}
+return result;
 
-
+ }
+public int countSolutions(int col,int count) {
+	if(col==board.length) {
+		//.out.println("reached first if");
+		return 1;
+	}
+	for(int row=0;row<board.length;row++) {
+		if(addQueen(row,col)) {
+			count+=countSolutions(col+1,0);
+		
+			removeQueen(row,col);
+		}
+	}
+	//System.out.println("reached end of loop");
+	return count;
+}
+public int countSolutions(){
+	for(int i=0;i<board.length;i++) {
+		for(int col=0;col<board.length;col++) {
+			if(board[i][col]!=0) {
+				throw new IllegalStateException("board has to be filled with 0 in the beginning");
+			}
+		}
+	}
+	return countSolutions(0,0);
+}
 }
